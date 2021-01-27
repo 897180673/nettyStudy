@@ -24,7 +24,6 @@ public class Main {
                       @Override
                       protected void initChannel( SocketChannel ch ) throws Exception {
                           ch.pipeline()
-                                  .addLast(new TestChannelOutBoundHandler("SampleOutBoundHandlerD"))
                                   .addLast(new TestChannelInBoundHandler("SampleInBoundHandlerA", false))
                                   .addLast(new TestChannelInBoundHandler("SampleInBoundHandlerB", false))
                                   .addLast(new TestChannelInBoundHandler("SampleInBoundHandlerC", true));
@@ -35,6 +34,9 @@ public class Main {
                       }
         }) ;
 
+        //传输的最小的单位是ByteBuf ,headContext如果接受到的msg不是ByteBuf,客户端将收不到消息
+        //ctx.writeAndFlush  会从当前的Handler 向headContext 方向传播,如果前面没有OutHandler 那么客户端是收不到的
+        //ctx.channel().writeAndFlush 从tailContext 向HeadContext进行传输
 
         ChannelFuture f = serverBootstrap.bind(8088).sync();
         System.out.println("Http Server started， Listening on " + 8088);
