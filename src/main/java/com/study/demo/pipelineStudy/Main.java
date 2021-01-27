@@ -23,6 +23,7 @@ public class Main {
                   .childHandler(new ChannelInitializer< SocketChannel>() {
                       @Override
                       protected void initChannel( SocketChannel ch ) throws Exception {
+
                           ch.pipeline()
                                   .addLast(new TestChannelInBoundHandler("SampleInBoundHandlerA", false))
                                   .addLast(new TestChannelInBoundHandler("SampleInBoundHandlerB", false))
@@ -31,6 +32,8 @@ public class Main {
                                   .addLast(new TestChannelOutBoundHandler("SampleOutBoundHandlerA"))
                                   .addLast(new TestChannelOutBoundHandler("SampleOutBoundHandlerB"))
                                   .addLast(new TestChannelOutBoundHandler("SampleOutBoundHandlerC"));
+
+
                       }
         }) ;
 
@@ -38,6 +41,9 @@ public class Main {
         //ctx.writeAndFlush  会从当前的Handler 向headContext 方向传播,如果前面没有OutHandler 那么客户端是收不到的
         //ctx.channel().writeAndFlush 从tailContext 向HeadContext进行传输
 
+
+        //异常传播总结   在pipline 中异常只会沿着产生异常的Handler ,向着tailContext方向传播 ChannelountBoundHandler
+        //的exceptionCaught方法是建议弃用的 ,建议在pipeline的尾部 统一增加一个异常处理的Handler
         ChannelFuture f = serverBootstrap.bind(8088).sync();
         System.out.println("Http Server started， Listening on " + 8088);
         f.channel().closeFuture().sync();

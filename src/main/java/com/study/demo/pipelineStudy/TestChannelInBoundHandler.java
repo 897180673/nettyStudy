@@ -16,7 +16,16 @@ public class TestChannelInBoundHandler extends ChannelInboundHandlerAdapter {
         if (flush) {
             ctx.channel().writeAndFlush(msg);
         } else {
-            super.channelRead(ctx, msg);
+            if("SampleInBoundHandlerB".equals(name))
+            throw new RuntimeException("InBoundHandler: " + name);
+            else
+                super.channelRead(ctx, msg);
         }
+
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        System.out.println("InBoundHandlerException: " + name);
+        ctx.fireExceptionCaught(cause);
     }
 }

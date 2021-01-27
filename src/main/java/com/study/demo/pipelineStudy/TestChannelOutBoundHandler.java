@@ -16,4 +16,10 @@ public class TestChannelOutBoundHandler extends ChannelOutboundHandlerAdapter {
         System.out.println("OutBoundHandler: " + name);
         super.write(ctx, msg, promise);
     }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        System.out.println("OutBoundHandlerException: " + name);
+        ctx.fireExceptionCaught(cause);
+    }
+
 }
