@@ -10,6 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 public class Main {
 
@@ -23,9 +24,11 @@ public class Main {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) {
-                         //   ch.pipeline().addLast(new FixedLengthFrameDecoder(4));//定长
-                            ByteBuf delimiter = Unpooled.copiedBuffer("&".getBytes());
-                            ch.pipeline().addLast(new DelimiterBasedFrameDecoder(10, true, false, delimiter));
+                           //   ch.pipeline().addLast(new FixedLengthFrameDecoder(4));//定长
+                          //  ByteBuf delimiter = Unpooled.copiedBuffer("&".getBytes());
+                         //   ch.pipeline().addLast(new DelimiterBasedFrameDecoder(10, true, false, delimiter)); 特殊字符解码
+                            LengthFieldBasedFrameDecoder lengthFieldBasedFrameDecoder=new LengthFieldBasedFrameDecoder(30,0,1,0,1); //长度域解码
+                            ch.pipeline().addLast(lengthFieldBasedFrameDecoder);
 
                             ch.pipeline().addLast(new EchoHandler());
                         }
